@@ -26,6 +26,7 @@ setLocale({
     lessThan: "Deve ser menor que ${less}",
     moreThan: "Deve ser maior que ${more}",
     positive: "Deve ser um número positivo",
+    integer: "Deve ser um número inteiro",
     negative: "Deve ser um número negativo",
   },
   date: {
