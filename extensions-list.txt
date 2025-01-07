@@ -1,0 +1,17 @@
+danielpinto8zz6.c-cpp-compile-run
+dbaeumer.vscode-eslint
+editorconfig.editorconfig
+esbenp.prettier-vscode
+formulahendry.code-runner
+github.copilot
+github.copilot-chat
+ms-vscode.cmake-tools
+ms-vscode.cpptools
+ms-vscode.cpptools-extension-pack
+ms-vscode.cpptools-themes
+ms-vsliveshare.vsliveshare
+tal7aouy.theme
+twxs.cmake
+visualstudioexptteam.intellicode-api-usage-examples
+visualstudioexptteam.vscodeintellicode
+vscode-icons-team.vscode-icons
