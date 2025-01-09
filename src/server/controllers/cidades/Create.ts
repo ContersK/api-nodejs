@@ -1,22 +1,26 @@
-import { Request, RequestHandler, Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from "yup";
-import "../../shared/services/translationsYup";
+
 import { validation } from "../../shared/middlewares";
 
 interface ICidade {
   nome: string;
 }
-
-export const createValidation = validation((getSchema) => ({
-  body: getSchema<ICidade>(
-    yup.object().shape({
-      nome: yup.string().strict().required().min(3),
-    })
-  ),
-}));
+export const createValidation = validation(
+  (
+    getSchema: <T extends yup.Maybe<yup.AnyObject>>(
+      schema: yup.ObjectSchema<T>
+    ) => yup.ObjectSchema<T>
+  ) => ({
+    body: getSchema<ICidade>(
+      yup.object().shape({
+        nome: yup.string().required().min(3).strict(),
+      })
+    ),
+  })
+);
 
 export const create = async (req: Request<{}, {}, ICidade>, res: Response) => {
-  console.log(req.body);
   return res.status(StatusCodes.CREATED).json(1);
 };
