@@ -13,7 +13,6 @@
   "scripts": {
     "postinstall": "tsc",
     "production": "node build/index.js",
-    "build": "tsc",
     "dev": "ts-node-dev ./src/index.ts",
     "start": "ts-node-dev ./src/index.ts",
     "test": "jest"
