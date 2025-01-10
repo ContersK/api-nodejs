@@ -3,7 +3,7 @@ import { server } from "./server/Server";
 //inicialização e verificação de porta do servidor
 console.log("iniciando server...");
 server
-  .listen(process.env.PORT || 3333, () => {
+  .listen(parseInt(process.env.PORT || "3333"), "::", () => {
     console.log(`server rodando na porta numero: ${process.env.PORT}`);
   })
   .on("error", (err) => {

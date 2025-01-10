@@ -15,7 +15,7 @@
     "build": "tsc",
     "production": "node build/index.js",
     "dev": "ts-node-dev ./src/index.ts",
-    "start": "ts-node-dev ./src/index.js",
+    "start": "ts-node-dev ./src/index.ts",
     "test": "jest"
   },
   "author": "Conters",
