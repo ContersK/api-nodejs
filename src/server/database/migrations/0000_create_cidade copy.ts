@@ -8,7 +8,7 @@ export async function up(knex: Knex) {
       table.bigIncrements("id").primary().index();
       table.string("nome", 150).checkLength("<=", 150).index().notNullable();
 
-      table.comment("Tabela usada para armazenar cidades do sistema.");
+      table.comment("Tabela usada para armazenar cidades no sistema.");
     })
     .then(() => {
       console.log(`# Created table ${ETableNames.CIDADE}`);
