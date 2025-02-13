@@ -2,18 +2,21 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
 import { validation } from '../../shared/middlewares';
-import { ICidade } from '../../database/models';
-import { CidadesProvider } from '../../database/providers/cidades';
+import { IPessoa } from '../../database/models';
+import { PessoasProvider } from '../../database/providers/pessoas';
 
 interface IParamProps {
   id?: number;
 }
-interface IBodyProps extends Omit<ICidade, 'id'> {}
+interface IBodyProps extends Omit<IPessoa, 'id'> {}
 
 export const UpdateByIDValidation = validation((getSchema) => ({
   body: getSchema<IBodyProps>(
     yup.object().shape({
-      nome: yup.string().required().min(3),
+      nomeCompleto: yup.string().required().min(3).max(150),
+      email: yup.string().required().email(),
+      dataNascimento: yup.string().required(),
+      cidadeId: yup.number().required().strict(true).integer().positive(),
     })
   ),
   params: getSchema<IParamProps>(
@@ -35,7 +38,7 @@ export const UpdateByID = async (
     });
   }
 
-  const result = await CidadesProvider.UpdateByID(req.params.id, req.body);
+  const result = await PessoasProvider.UpdateByID(req.params.id, req.body);
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {

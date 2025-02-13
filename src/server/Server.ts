@@ -1,7 +1,7 @@
-import express from "express";
-import "dotenv/config";
-import { router } from "./routes/index";
-//import "./shared/services/translationsYup"; não esta funcionando!
+import express from 'express';
+import 'dotenv/config';
+import { router } from './routes/index';
+import './shared/services/translationsYup';
 
 const server = express();
 

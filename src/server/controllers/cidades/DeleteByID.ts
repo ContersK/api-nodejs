@@ -1,10 +1,9 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import * as yup from "yup";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import * as yup from 'yup';
 
-import { validation } from "../../shared/middlewares";
-import { CidadesController } from ".";
-import { CidadesProvider } from "../../database/providers/cidades";
+import { validation } from '../../shared/middlewares';
+import { CidadesProvider } from '../../database/providers/cidades';
 
 interface IParamProps {
   id?: number;
