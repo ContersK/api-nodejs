@@ -1,57 +1,39 @@
-import { RequestHandler, Request, Response, NextFunction } from "express";
-import { AnyObject, Maybe, Schema, ValidationError, ObjectSchema } from "yup";
-import { StatusCodes } from "http-status-codes";
+import { RequestHandler } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Schema, ValidationError } from 'yup';
 
-type TProperty = "body" | "header" | "params" | "query";
-
-type TGetSchema = <T extends Maybe<AnyObject>>(
-  schema: ObjectSchema<T>
-) => ObjectSchema<T>;
-
-type TAllSchemas = Record<TProperty, ObjectSchema<any>>;
-
+type TProperty = 'body' | 'header' | 'params' | 'query';
+type TGetSchema = <T>(schema: Schema<T>) => Schema<T>;
+type TAllSchemas = Record<TProperty, Schema<any>>;
 type TGetAllSchemas = (getSchema: TGetSchema) => Partial<TAllSchemas>;
-
 type TValidation = (getAllSchemas: TGetAllSchemas) => RequestHandler;
 
 export const validation: TValidation =
-  (getAllSchemas) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    const schemas = getAllSchemas((Schema) => Schema);
-    const errorResult: Record<TProperty, Record<string, string>> = {
-      body: {},
-      header: {},
-      params: {},
-      query: {},
-    };
+  (getAllSchemas) => async (req, res, next) => {
+    const schemas = getAllSchemas((schema) => schema);
+    const errorsResult: Record<string, Record<string, string>> = {};
 
-    Object.entries(schemas).forEach(([field, schema]) => {
+    Object.entries(schemas).forEach(([key, schema]) => {
       try {
-        schema.validateSync(req[field as TProperty], {
-          abortEarly: false,
-        });
-      } catch (error) {
-        const yupError = error as ValidationError;
-        const ValidationErrors: Record<string, string> = {};
+        schema.validateSync(req[key as TProperty], { abortEarly: false });
+      } catch (err) {
+        const yupError = err as ValidationError;
+        const errors: Record<string, string> = {};
 
-        yupError.inner.forEach((err) => {
-          if (err.path === undefined) return;
-          ValidationErrors[err.path] = err.message;
+        yupError.inner.forEach((error) => {
+          if (error.path === undefined) return;
+          errors[error.path] = error.message;
         });
 
-        errorResult[field as TProperty] = ValidationErrors;
+        errorsResult[key] = errors;
       }
     });
 
-    const filteredErrorResult = Object.fromEntries(
-      Object.entries(errorResult).filter(
-        ([_, errors]) => Object.keys(errors).length > 0
-      )
-    );
-
-    if (Object.keys(filteredErrorResult).length > 0) {
-      return res.status(StatusCodes.BAD_REQUEST).json(filteredErrorResult);
+    if (Object.entries(errorsResult).length === 0) {
+      return next();
+    } else {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        errors: errorsResult,
+      });
     }
-
-    return next();
   };

@@ -15,7 +15,6 @@ export const UpdateByIDValidation = validation((getSchema) => ({
     yup.object().shape({
       nomeCompleto: yup.string().required().min(3).max(150),
       email: yup.string().required().email(),
-      dataNascimento: yup.string().required(),
       cidadeId: yup.number().required().strict(true).integer().positive(),
     })
   ),
