@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
 
 import { CidadesProvider } from '../../database/providers/cidades';
-import { validation } from '../../shared/middlewares';
+import { validation } from '../../shared/middleware';
 import { ICidade } from '../../database/models';
 
 interface IBodyProps extends Omit<ICidade, 'id'> {}

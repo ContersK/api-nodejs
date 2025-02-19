@@ -1,7 +1,7 @@
-//import * as Create from './Create';
-//import * as GetByID from './GetByID';
+import * as Create from './SignUp';
+import * as GetByEmail from './SignIn';
 
 export const UsuariosController = {
-  // ...Create,
-  //...GetByID,
+  ...Create,
+  ...GetByEmail,
 };

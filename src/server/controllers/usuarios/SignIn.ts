@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
 
 import { UsuariosProvider } from '../../database/providers/usuarios';
-import { validation } from '../../shared/middlewares';
+import { validation } from '../../shared/middleware';
 import { IUsuario } from '../../database/models';
 
 interface IBodyProps extends Omit<IUsuario, 'id' | 'nome'> {}
@@ -24,6 +24,7 @@ export const signIn = async (
   const { email, senha } = req.body;
 
   const result = await UsuariosProvider.getByEmail(email);
+
   if (result instanceof Error) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       errors: {

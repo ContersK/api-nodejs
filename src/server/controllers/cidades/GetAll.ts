@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import * as yup from "yup";
-import { CidadesProvider } from "../../database/providers/cidades";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import * as yup from 'yup';
+import { CidadesProvider } from '../../database/providers/cidades';
 
-import { validation } from "../../shared/middlewares";
+import { validation } from '../../shared/middleware';
 
 interface IQueryProps {
   id?: number;
@@ -29,10 +29,10 @@ export const GetAll = async (
   const result = await CidadesProvider.getAll(
     req.query.page || 1,
     req.query.limit || 7,
-    req.query.filter || "",
+    req.query.filter || '',
     Number(req.query.id)
   );
-  const count = await CidadesProvider.count(req.query.filter || "");
+  const count = await CidadesProvider.count(req.query.filter || '');
 
   if (result instanceof Error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -48,8 +48,8 @@ export const GetAll = async (
     });
   }
 
-  res.setHeader("access-control-expose-headers", "x-total-count");
-  res.setHeader("x-total-count", 1);
+  res.setHeader('access-control-expose-headers', 'x-total-count');
+  res.setHeader('x-total-count', 1);
 
   return res.status(StatusCodes.OK).json(result);
 };

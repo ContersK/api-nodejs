@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
 
 import { PessoasProvider } from '../../database/providers/pessoas';
-import { validation } from '../../shared/middlewares';
+import { validation } from '../../shared/middleware';
 
 interface IParamProps {
   id?: number;
