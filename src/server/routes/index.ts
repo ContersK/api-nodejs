@@ -71,12 +71,12 @@ router.delete(
 );
 
 router.post(
-  './entrar/',
+  '/entrar/',
   UsuariosController.signInValidation,
   UsuariosController.signIn
 );
 router.post(
-  './cadastrar',
+  '/cadastrar',
   UsuariosController.signUpValidation,
   UsuariosController.signUp
 );

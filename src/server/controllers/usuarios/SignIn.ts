@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
-
+import jwt from 'jsonwebtoken';
 import { UsuariosProvider } from '../../database/providers/usuarios';
+import bcrypt from 'bcrypt';
 import { validation } from '../../shared/middleware';
 import { IUsuario } from '../../database/models';
+import { PassWordCrypto } from '../../shared/services';
 
 interface IBodyProps extends Omit<IUsuario, 'id' | 'nome'> {}
 
@@ -33,15 +35,23 @@ export const signIn = async (
     });
   }
 
-  if (senha !== result.senha) {
+  // Verifica a senha usando bcrypt
+  const isPasswordValid = await bcrypt.compare(
+    senha,
+    PassWordCrypto.encrypt(senha)
+  );
+  if (!isPasswordValid) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       errors: {
         default: 'Email ou senha são inválidos',
       },
     });
-  } else {
-    return res
-      .status(StatusCodes.OK)
-      .json({ accessToken: 'teste.teste.teste' });
   }
+
+  // Gera um token JWT
+  const accessToken = jwt.sign({ userId: result.id }, 'seuSegredoJWT', {
+    expiresIn: '1h',
+  });
+
+  return res.status(StatusCodes.OK).json({ accessToken });
 };
