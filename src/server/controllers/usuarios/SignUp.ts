@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UsuariosProvider } from '../../database/providers/usuarios';
 import { validation } from '../../shared/middleware';
 import { IUsuario } from '../../database/models';
+import { PassWordCrypto } from '../../shared/services';
 
 interface IBodyProps extends Omit<IUsuario, 'id'> {}
 
@@ -34,14 +34,10 @@ export const signUp = async (
       });
     }
 
-    // Criptografa a senha
-    const salt = await bcrypt.genSalt(12);
-    const hashedSenha = await bcrypt.hash(req.body.senha, salt);
-
     // Cria o usuário no banco de dados
+    // O UsuariosProvider.create já aplica o PassWordCrypto.encrypt
     const createdUserId = await UsuariosProvider.create({
       ...req.body,
-      senha: hashedSenha,
     });
 
     if (createdUserId instanceof Error) {
@@ -60,7 +56,10 @@ export const signUp = async (
     });
 
     // Retorna apenas o ID do usuário criado
-    return res.status(StatusCodes.CREATED).json(createdUserId);
+    return res.status(StatusCodes.CREATED).json({
+      id: createdUserId,
+      accessToken: token,
+    });
   } catch (error) {
     console.error('SignUp Error:', error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

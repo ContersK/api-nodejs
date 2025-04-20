@@ -1,27 +1,21 @@
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
 
-const SALT_RANDOMS = 12;
-
-const hashPassword = async (password: string) => {
-  const saltGenerated = await genSalt(SALT_RANDOMS);
-
-  const hashPassword = await hash(password, SALT_RANDOMS);
-
-  return await hash(password, saltGenerated);
-};
-
-const veryfyPassword = async (
-  password: string,
-  hashedPassword: string
-): Promise<boolean> => {
-  return await bcrypt.compare(password, hashedPassword);
-};
+const SALT_ROUNDS = 10;
 
 export const PassWordCrypto = {
   encrypt: (password: string): string => {
-    return bcrypt.hashSync(password, 10);
+    // Usar número ou variável de ambiente convertida para número
+    const saltRounds = parseInt(
+      process.env.SALT_ROUNDS || SALT_ROUNDS.toString(),
+      10
+    );
+    return bcrypt.hashSync(password, saltRounds);
+  },
+
+  verifyPassword: async (
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> => {
+    return await bcrypt.compare(password, hashedPassword);
   },
 };
-function genSalt(SALT_RANDOMS: number): Promise<string> {
-  return bcrypt.genSalt(SALT_RANDOMS);
-}

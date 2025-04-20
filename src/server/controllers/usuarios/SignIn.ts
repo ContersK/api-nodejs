@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as yup from 'yup';
-import jwt from 'jsonwebtoken';
+
 import { UsuariosProvider } from '../../database/providers/usuarios';
-import bcrypt from 'bcrypt';
+import { JWTService } from '../../shared/services/JWTService';
+import { PassWordCrypto } from '../../shared/services/PassWordCrypto';
 import { validation } from '../../shared/middleware';
 import { IUsuario } from '../../database/models';
-import { PassWordCrypto } from '../../shared/services';
 
 interface IBodyProps extends Omit<IUsuario, 'id' | 'nome'> {}
 
@@ -25,9 +25,8 @@ export const signIn = async (
 ) => {
   const { email, senha } = req.body;
 
-  const result = await UsuariosProvider.getByEmail(email);
-
-  if (result instanceof Error) {
+  const usuario = await UsuariosProvider.getByEmail(email);
+  if (usuario instanceof Error) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       errors: {
         default: 'Email ou senha são inválidos',
@@ -35,23 +34,26 @@ export const signIn = async (
     });
   }
 
-  // Verifica a senha usando bcrypt
-  const isPasswordValid = await bcrypt.compare(
+  const passwordMatch = await PassWordCrypto.verifyPassword(
     senha,
-    PassWordCrypto.encrypt(senha)
+    usuario.senha
   );
-  if (!isPasswordValid) {
+  if (!passwordMatch) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       errors: {
         default: 'Email ou senha são inválidos',
       },
     });
+  } else {
+    const accessToken = JWTService.sign({ uid: usuario.id });
+    if (accessToken === 'JWT_SECRET_NOT_FOUND') {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: {
+          default: 'Erro ao gerar o token de acesso',
+        },
+      });
+    }
+
+    return res.status(StatusCodes.OK).json({ accessToken });
   }
-
-  // Gera um token JWT
-  const accessToken = jwt.sign({ userId: result.id }, 'seuSegredoJWT', {
-    expiresIn: '1h',
-  });
-
-  return res.status(StatusCodes.OK).json({ accessToken });
 };
