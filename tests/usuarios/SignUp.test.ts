@@ -10,7 +10,7 @@ describe('Usuário - SignUp', () => {
       email: 'jucasilva@gmail.com',
     });
     expect(res1.statusCode).toEqual(StatusCodes.CREATED);
-    expect(typeof res1.body).toEqual('number');
+    expect(typeof res1.body).toEqual('object');
   });
   it('Cadastra usuário 2', async () => {
     const res1 = await testServer.post('/cadastrar').send({
@@ -19,22 +19,25 @@ describe('Usuário - SignUp', () => {
       email: 'pedro@gmail.com',
     });
     expect(res1.statusCode).toEqual(StatusCodes.CREATED);
-    expect(typeof res1.body).toEqual('number');
+    expect(typeof res1.body).toEqual('object');
   });
   it('Erro ao cadastrar um usuário com email duplicado', async () => {
+    const emailDuplicado = 'pedroduplicado@gmail.com';
+
     const res1 = await testServer.post('/cadastrar').send({
       senha: '123456',
       nome: 'Pedro da Rosa',
-      email: 'pedroduplicado@gmail.com',
+      email: emailDuplicado,
     });
     expect(res1.statusCode).toEqual(StatusCodes.CREATED);
-    expect(typeof res1.body).toEqual('number');
+    expect(typeof res1.body).toEqual('object');
 
     const res2 = await testServer.post('/cadastrar').send({
       senha: '123456',
       nome: 'Juca da Silva',
-      email: 'pedroduplicado@gmail.com',
+      email: emailDuplicado,
     });
+
     expect(res2.statusCode).toEqual(StatusCodes.CONFLICT);
     expect(res2.body).toHaveProperty('errors.default');
   });

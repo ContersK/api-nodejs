@@ -8,6 +8,7 @@ import { validation } from '../../shared/middleware';
 interface IParamProps {
   id?: number;
 }
+
 export const getByIDValidation = validation((getSchema) => ({
   params: getSchema<IParamProps>(
     yup.object().shape({
@@ -26,7 +27,16 @@ export const GetByID = async (req: Request<IParamProps>, res: Response) => {
   }
 
   const result = await PessoasProvider.getById(req.params.id);
+
   if (result instanceof Error) {
+    if (result.message === 'Registro não encontrado') {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        errors: {
+          default: result.message,
+        },
+      });
+    }
+
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       errors: {
         default: result.message,

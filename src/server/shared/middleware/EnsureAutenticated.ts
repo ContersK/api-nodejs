@@ -8,7 +8,7 @@ export const ensureAuthenticated: RequestHandler = async (req, res, next) => {
 
   if (!authorization) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      errors: { default: 'erro1' },
+      errors: { default: 'não autenticado' },
     });
   }
 
@@ -16,7 +16,7 @@ export const ensureAuthenticated: RequestHandler = async (req, res, next) => {
 
   if (type !== 'Bearer') {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      errors: { default: 'erro2' },
+      errors: { default: 'não autenticado' },
     });
   }
 
@@ -27,7 +27,7 @@ export const ensureAuthenticated: RequestHandler = async (req, res, next) => {
     });
   } else if (jwtData === 'INVALID_TOKEN') {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      errors: { default: 'erro3' },
+      errors: { default: 'não autenticado' },
     });
   }
 
